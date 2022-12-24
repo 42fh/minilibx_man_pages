@@ -1,90 +1,34 @@
-<h1>NAME</h1>
-<p>MiniLibX - Manipulating images</p>
-<h1>SYNOPSYS</h1>
-<pre><code>void *</code></pre>
-<p><strong>mlx_new_image</strong> ( <em>void *mlx_ptr, int width, int
-height</em> );</p>
-<pre><code>char *</code></pre>
-<p><strong>mlx_get_data_addr</strong> ( <em>void *img_ptr, int
-*bits_per_pixel, int *size_line, int *endian</em> );</p>
-<pre><code>int</code></pre>
-<p><strong>mlx_put_image_to_window</strong> ( <em>void *mlx_ptr, void
-*win_ptr, void *img_ptr, int x, int y</em> );</p>
-<pre><code>unsigned int</code></pre>
-<p><strong>mlx_get_color_value</strong> ( <em>void *mlx_ptr, int
-color</em> );</p>
-<pre><code>void *</code></pre>
-<p><strong>mlx_xpm_to_image</strong> ( <em>void *mlx_ptr, char
-**xpm_data, int *width, int *height</em> );</p>
-<pre><code>void *</code></pre>
-<p><strong>mlx_xpm_file_to_image</strong> ( <em>void *mlx_ptr, char
-*filename, int *width, int *height</em> );</p>
-<pre><code>int</code></pre>
-<p><strong>mlx_destroy_image</strong> ( <em>void *mlx_ptr, void
-*img_ptr</em> );</p>
-<h1>DESCRIPTION</h1>
-<p><strong>mlx_new_image</strong> () creates a new image in memory. It
-returns a <em>void *</em> identifier needed to manipulate this image
-later. It only needs the size of the image to be created, using the
-<em>width</em> and <em>height</em> parameters, and the <em>mlx_ptr</em>
-connection identifier (see the <strong>mlx</strong> manual).</p>
-<p>The user can draw inside the image (see below), and can dump the
-image inside a specified window at any time to display it on the screen.
-This is done using <strong>mlx_put_image_to_window</strong> (). Three
-identifiers are needed here, for the connection to the display, the
-window to use, and the image (respectively <em>mlx_ptr</em> ,
-<em>win_ptr</em> and <em>img_ptr</em> ). The ( <em>x</em> , <em>y</em> )
-coordinates define where the image should be placed in the window.</p>
-<p><strong>mlx_get_data_addr</strong> () returns information about the
-created image, allowing a user to modify it later. The <em>img_ptr</em>
-parameter specifies the image to use. The three next parameters should
-be the addresses of three different valid integers.
-<em>bits_per_pixel</em> will be filled with the number of bits needed to
-represent a pixel color (also called the depth of the image).
-<em>size_line</em> is the number of bytes used to store one line of the
-image in memory. This information is needed to move from one line to
-another in the image. <em>endian</em> tells you wether the pixel color
-in the image needs to be stored in little endian ( <em>endian</em> ==
-0), or big endian ( <em>endian</em> == 1).</p>
-<p><strong>mlx_get_data_addr</strong> returns a <em>char *</em> address
-that represents the begining of the memory area where the image is
-stored. From this adress, the first <em>bits_per_pixel</em> bits
-represent the color of the first pixel in the first line of the image.
-The second group of <em>bits_per_pixel</em> bits represent the second
-pixel of the first line, and so on. Add <em>size_line</em> to the adress
-to get the begining of the second line. You can reach any pixels of the
-image that way.</p>
-<p><strong>mlx_destroy_image</strong> destroys the given image (
-<em>img_ptr</em> ).</p>
-<h1>STORING COLOR INSIDE IMAGES</h1>
-<p>Depending on the display, the number of bits used to store a pixel
-color can change. The user usually represents a color in RGB mode, using
-one byte for each component (see <strong>mlx_pixel_put</strong> manual).
-This must be translated to fit the <em>bits_per_pixel</em> requirement
-of the image, and make the color understandable to the X-Server. That is
-the purpose of the <strong>mlx_get_color_value</strong> () function. It
-takes a standard RGB <em>color</em> parameter, and returns an
-<em>unsigned int</em> value. The <em>bits_per_pixel</em> least
-significant bits of this value can be stored in the image.</p>
-<p>Keep in mind that the least significant bits position depends on the
-local computer's endian. If the endian of the image (in fact the endian
-of the X-Server's computer) differs from the local endian, then the
-value should be transformed before being used.</p>
-<h1>XPM IMAGES</h1>
-<p>The <strong>mlx_xpm_to_image</strong> () and
-<strong>mlx_xpm_file_to_image</strong> () functions will create a new
-image the same way. They will fill it using the specified
-<em>xpm_data</em> or <em>filename</em> , depending on which function is
-used. Note that MiniLibX does not use the standard Xpm library to deal
-with xpm images. You may not be able to read all types of xpm images. It
-however handles transparency.</p>
-<h1>RETURN VALUES</h1>
-<p>The three functions that create images,
-<strong>mlx_new_image()</strong> , <strong>mlx_xpm_to_image()</strong>
-and <strong>mlx_xpm_file_to_image()</strong> , will return NULL if an
-error occurs. Otherwise they return a non-null pointer as an image
-identifier.</p>
-<h1>SEE ALSO</h1>
-<p>mlx(3), mlx_new_window(3), mlx_pixel_put(3), mlx_loop(3)</p>
-<h1>AUTHOR</h1>
-<p>Copyright ol@ - 2002-2014 - Olivier Crouzet</p>
+<p>.TH MiniLibX 3 “September 19, 2002” .SH NAME MiniLibX - Drawing
+inside windows .SH SYNOPSYS</p>
+<p>.nf .I int .fi .B mlx_pixel_put ( .I void <em>mlx_ptr, void
+</em>win_ptr, int x, int y, int color );</p>
+<p>.nf .I int .fi .B mlx_string_put ( .I void <em>mlx_ptr, void
+</em>win_ptr, int x, int y, int color, char *string );</p>
+<p>.SH DESCRIPTION The .B mlx_pixel_put () function draws a defined
+pixel in the window .I win_ptr using the ( .I x , .I y ) coordinates,
+and the specified .I color &amp;. The origin (0,0) is the upper left
+corner of the window, the x and y axis respectively pointing right and
+down. The connection identifier, .I mlx_ptr , is needed (see the .B mlx
+man page).</p>
+<p>Parameters for .B mlx_string_put () have the same meaning. Instead of
+a simple pixel, the specified .I string will be displayed at ( .I x , .I
+y ).</p>
+<p>In both functions, it is impossible to display anything outside the
+specified window, nor display in another window in front of the selected
+one.</p>
+<p>.SH COLOR MANAGEMENT The .I color parameter has an integer type. The
+displayed color needs to be encoded in this integer, following a defined
+scheme. All displayable colors can be split in 3 basic colors: red,
+green and blue. Three associated values, in the 0-255 range, represent
+how much of each color is mixed up to create the original color. Theses
+three values must be set inside the integer to display the right color.
+The three least significant bytes of this integer are filled as shown in
+the picture below:</p>
+<p>.TS allbox; c s s s s r c c c c. Color Integer Interpretation [*a] R
+G B Bit numbers 31..24 23..16 15..8 7..0 .TE</p>
+<p>While filling the integer, make sure you avoid endian problems.
+Remember that the “blue” byte should always be the least significant
+one.</p>
+<p>.SH SEE ALSO mlx(3), mlx_new_window(3), mlx_new_image(3),
+mlx_loop(3)</p>
+<p>.SH AUTHOR Copyright ol@ - 2002-2014 - Olivier Crouzet</p>
